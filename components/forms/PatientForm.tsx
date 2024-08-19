@@ -1,8 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import {Form} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
- 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -10,7 +8,8 @@ import CustomFormFiled from "../CustomFormFiled"
 import SubmitButton from "../SubmitButton"
 import { useState } from "react"
 import { UserFormValidation } from "@/lib/validation"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
+import { createUser } from "@/lib/actons/patient.actions"
  
 
 export enum FormFieldType{
@@ -37,21 +36,23 @@ const PatientForm = ()=>  {
     },
   })
 
-  async function onSubmit({name,email,phone}: z.infer<typeof UserFormValidation>) {
+  async function onSubmit(values: z.infer<typeof UserFormValidation>) {
 
     setIsLoading(true);
     try{
-        // const userData={
-        //     name,
-        //     email,
-        //     phone
-        // }
-        // const user=await createUser(userData);
-        // if(user) router.push(`/patients/${user.$id}/register`)
+        const user = {
+            name: values.name,
+            email: values.email,
+            phone: values.phone,
+          };
+        console.log(user)
+        const newuser=await createUser(user);
+        if(newuser) router.push(`/patients/${newuser.$id}/register`)
 
     }catch(error){
         console.log(error);
     }
+    setIsLoading(false);
   }          
   return (
     <Form {...form}>
